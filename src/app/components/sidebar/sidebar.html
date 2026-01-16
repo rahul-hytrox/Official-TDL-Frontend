@@ -1,0 +1,102 @@
+<!-- Mobile Toggle Button -->
+<button class="mobile-toggle" (click)="toggleSidebar()" [class.active]="isSidebarOpen">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+</button>
+
+<!-- Overlay for Mobile -->
+<div class="sidebar-overlay" [class.show]="isSidebarOpen" (click)="toggleSidebar()"></div>
+
+<aside class="sidebar" [class.open]="isSidebarOpen">
+    <div class="logo">
+        <span class="logo-icon">📊</span>
+        <h2>TDL Portal</h2>
+    </div>
+
+    <nav class="nav-links">
+        <!-- Common for everyone -->
+        <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+            (click)="isSidebarOpen = false">
+            <span class="icon">🏠</span>
+            <span class="label">Dashboard</span>
+        </a>
+
+        <a routerLink="/profile" routerLinkActive="active" (click)="isSidebarOpen = false">
+            <span class="icon">👤</span>
+            <span class="label">Profile</span>
+        </a>
+
+        <a routerLink="/birthdays" routerLinkActive="active" (click)="isSidebarOpen = false">
+            <span class="icon">🎂</span>
+            <span class="label">Birthdays</span>
+        </a>
+
+        <a routerLink="/leave-app-form" routerLinkActive="active" (click)="isSidebarOpen = false">
+            <span class="icon">📝</span>
+            <span class="label">Leave Request</span>
+        </a>
+
+        <!-- Employee Specific -->
+        @if (!isAdmin()) {
+        <a routerLink="/attendance" routerLinkActive="active" (click)="isSidebarOpen = false">
+            <span class="icon">📅</span>
+            <span class="label">My Attendance</span>
+        </a>
+        <a routerLink="/leave-list" routerLinkActive="active" (click)="isSidebarOpen = false">
+            <span class="icon">📋</span>
+            <span class="label">Leave Status</span>
+        </a>
+        }
+
+        <!-- Administrator Specific -->
+        @if (isAdmin()) {
+        <div class="nav-divider">Management</div>
+        <a routerLink="/management/employees" routerLinkActive="active" (click)="isSidebarOpen = false">
+            <span class="icon">👥</span>
+            <span class="label">Employees</span>
+        </a>
+        <a routerLink="/management/attendance" routerLinkActive="active" (click)="isSidebarOpen = false">
+            <span class="icon">📅</span>
+            <span class="label">Employees Attendance</span>
+        </a>
+        <a routerLink="/attendance" routerLinkActive="active" (click)="isSidebarOpen = false">
+            <span class="icon">📋</span>
+            <span class="label">Attendance Logs</span>
+        </a>
+        <a routerLink="/management/reports" routerLinkActive="active" (click)="isSidebarOpen = false">
+            <span class="icon">📋</span>
+            <span class="label">Reports</span>
+        </a>
+        <a routerLink="/leave-list" routerLinkActive="active" (click)="isSidebarOpen = false">
+            <span class="icon">📝</span>
+            <span class="label">Employees Leave</span>
+        </a>
+        <a href="#" (click)="isSidebarOpen = false">
+            <span class="icon">⚙️</span>
+            <span class="label">Settings</span>
+        </a>
+        }
+
+        <div class="nav-divider">System</div>
+        <a routerLink="/holidays" routerLinkActive="active" (click)="isSidebarOpen = false">
+            <span class="icon">🏖️</span>
+            <span class="label">Holidays</span>
+        </a>
+
+        <a href="javascript:void(0)" (click)="onLogout()" class="logout-btn">
+            <span class="icon">🚪</span>
+            <span class="label">Logout</span>
+        </a>
+    </nav>
+
+    @if (user) {
+    <div class="sidebar-user">
+        <div class="user-avatar">{{ userInitials }}</div>
+        <div class="user-meta">
+            <span class="user-name">{{ user.emp_name }}</span>
+            <span class="user-role">{{ user.emp_role | titlecase }}</span>
+        </div>
+    </div>
+    }
+</aside>

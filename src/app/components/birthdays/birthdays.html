@@ -1,0 +1,113 @@
+<div class="dashboard-container">
+    <app-sidebar></app-sidebar>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="header-left">
+                <h1>Birthday Celebrations 🎂</h1>
+                <p class="subtitle">Stay connected and celebrate your colleagues' special days</p>
+            </div>
+        </header>
+
+        <!-- Today's Birthdays Section -->
+        <section class="today-section">
+            <div class="section-card today-card card">
+                <div class="bday-banner">
+                    <span class="confetti-icon">🎊</span>
+                    <h2>Today's Birthdays</h2>
+                    <span class="confetti-icon">🎈</span>
+                </div>
+
+                @if (isLoadingToday) {
+                <div class="loading-mini">
+                    <div class="spinner-small"></div>
+                    <p>Checking for today's stars...</p>
+                </div>
+                } @else {
+                @if (todaysBirthdays.length > 0) {
+                <div class="today-grid">
+                    @for (emp of todaysBirthdays; track emp.emp_profile_id) {
+                    <div class="special-bday-card">
+                        <div class="bday-avatar">
+                            {{ emp.emp_first_name.charAt(0) }}{{ emp.emp_last_name.charAt(0) }}
+                        </div>
+                        <div class="bday-details">
+                            <h3>Happy Birthday, {{ emp.emp_first_name }}! 🥳</h3>
+                            <p class="age-text">Turning <strong>{{ emp.age }}</strong> years young today!</p>
+                            <p class="designation">{{ emp.emp_designation }}</p>
+                        </div>
+                        <div class="bday-badges">
+                            <span class="badge">Cake Day! 🍰</span>
+                        </div>
+                    </div>
+                    }
+                </div>
+                } @else {
+                <div class="empty-today">
+                    <p>No birthdays today. But it's still a great day! ✨</p>
+                </div>
+                }
+                }
+            </div>
+        </section>
+
+        <!-- Monthly Birthdays Section -->
+        <section class="monthly-section">
+            <div class="section-card card">
+                <div class="section-header">
+                    <h3>Explore Birthday Calendar</h3>
+                    <div class="filter-controls">
+                        <label>Select Month:</label>
+                        <select [(ngModel)]="selectedMonth" class="month-select">
+                            @for (m of months; track m.value) {
+                            <option [value]="m.value">{{ m.name }}</option>
+                            }
+                        </select>
+                        <button class="btn btn-primary check-btn" (click)="loadMonthlyBirthdays()">
+                            Check Birthday List
+                        </button>
+                    </div>
+                </div>
+
+                @if (isLoadingMonthly) {
+                <div class="loading-mini">
+                    <div class="spinner-small"></div>
+                    <p>Syncing calendar data...</p>
+                </div>
+                } @else {
+                @if (monthlyBirthdays.length > 0) {
+                <div class="monthly-list">
+                    @for (emp of monthlyBirthdays; track emp.emp_profile_id) {
+                    <div class="monthly-bday-item">
+                        <div class="mini-avatar">
+                            {{ emp.emp_first_name.charAt(0) }}
+                        </div>
+                        <div class="emp-info">
+                            <span class="emp-name">{{ emp.emp_first_name }} {{ emp.emp_last_name }}</span>
+                            <span class="emp-id">#{{ emp.emp_profile_id }}</span>
+                        </div>
+                        <div class="bday-date">
+                            <span class="icon">📅</span>
+                            {{ emp.emp_dob | date:'MMMM d' }}
+                        </div>
+                        <div class="emp-designation">
+                            {{ emp.emp_designation }}
+                        </div>
+                    </div>
+                    }
+                </div>
+                } @else if (hasSearchedMonthly) {
+                <div class="empty-monthly">
+                    <span class="icon">📅</span>
+                    <p>No birthdays recorded for {{ months[+selectedMonth - 1].name }}.</p>
+                </div>
+                } @else {
+                <div class="empty-monthly">
+                    <p>Select a month and click "Check Birthday List" to explore.</p>
+                </div>
+                }
+                }
+            </div>
+        </section>
+    </main>
+</div>

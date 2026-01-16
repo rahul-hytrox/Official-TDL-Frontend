@@ -1,0 +1,35 @@
+/* You can add global styles to this file, and also import other style files */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    color: #1e293b;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Global Main Content Responsive Layout */
+.main-content {
+    margin-left: 260px;
+    padding: 32px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+    .main-content {
+        margin-left: 0;
+        padding-top: 80px;
+        /* Space for mobile toggle */
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}

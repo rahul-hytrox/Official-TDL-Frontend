@@ -1,0 +1,173 @@
+<div class="dashboard-container">
+    <app-sidebar></app-sidebar>
+
+    <main class="main-content">
+        <!-- Header Section -->
+        <header class="content-header">
+            <div class="header-title">
+                <h1>Employee Attendance Management</h1>
+                <p>Manage manual attendance and break records</p>
+            </div>
+            <div class="header-actions">
+                <div class="date-picker-wrapper">
+                    <label>Selected Date:</label>
+                    <input type="date" [(ngModel)]="formData.date" (change)="loadAttendanceStatus()" name="mainDate">
+                </div>
+            </div>
+        </header>
+
+        <!-- Section Tabs -->
+        <div class="section-tabs">
+            <button [class.active]="activeSection === 'login'" (click)="setSection('login')">
+                <span class="icon">🔑</span> Login / Logoff Status
+            </button>
+            <button [class.active]="activeSection === 'lunch'" (click)="setSection('lunch')">
+                <span class="icon">🍱</span> Lunch Break Manually
+            </button>
+            <button [class.active]="activeSection === 'tea'" (click)="setSection('tea')">
+                <span class="icon">☕</span> Tea Break Manually
+            </button>
+        </div>
+
+        <!-- Employee List Section -->
+        <div class="card employee-list-card">
+            <div class="card-header">
+                <h2>All Employees</h2>
+                <div class="count-badge">{{ employees.length }} Employees</div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="employee-table">
+                    <thead>
+                        <tr>
+                            <th>Profile ID</th>
+                            <th>Employee Name</th>
+                            <th>Designation</th>
+                            <th class="actions-head">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (isLoading) {
+                        <tr>
+                            <td colspan="4" class="loading-state">
+                                <div class="spinner"></div>
+                                <p>Loading employees...</p>
+                            </td>
+                        </tr>
+                        } @else {
+                        @for (emp of employees; track emp.emp_profile_id) {
+                        <tr>
+                            <td class="profile-id">{{ emp.emp_profile_id }}</td>
+                            <td class="emp-name">
+                                <div class="avatar-small">{{ emp.emp_first_name.charAt(0) }}{{
+                                    emp.emp_last_name.charAt(0) }}</div>
+                                <span>{{ emp.emp_first_name }} {{ emp.emp_last_name }}</span>
+                            </td>
+                            <td><span class="designation-chip">{{ emp.emp_designation }}</span></td>
+                            <td class="actions">
+                                @if (activeSection === 'login') {
+                                <button class="btn btn-login" (click)="openModal('login', emp)">Login</button>
+                                <button class="btn btn-logoff" (click)="openModal('logoff', emp)">Logoff</button>
+                                <button class="btn btn-absent" (click)="openModal('absent', emp)">Absent</button>
+                                } @else if (activeSection === 'lunch') {
+                                @if (isEmployeeAbsent(emp.emp_profile_id)) {
+                                <span class="status-badge absent">Marked Absent</span>
+                                } @else {
+                                <button class="btn btn-lunch" (click)="openModal('lunch', emp)">Lunch Break</button>
+                                }
+                                } @else if (activeSection === 'tea') {
+                                @if (isEmployeeAbsent(emp.emp_profile_id)) {
+                                <span class="status-badge absent">Marked Absent</span>
+                                } @else {
+                                <button class="btn btn-tea" (click)="openModal('tea1', emp)">Tea Break First</button>
+                                <button class="btn btn-tea" (click)="openModal('tea2', emp)">Tea Break Second</button>
+                                }
+                                }
+                            </td>
+                        </tr>
+                        }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Backdrop -->
+    @if (showModal) {
+    <div class="modal-backdrop" (click)="closeModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>{{ getModalTitle() }}</h3>
+                <button class="close-btn" (click)="closeModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <g fill="none" stroke="#1f6099" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            <path stroke-dasharray="60"
+                                d="M3 12c0 -4.97 4.03 -9 9 -9c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9c-4.97 0 -9 -4.03 -9 -9Z">
+                                <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="60;0" />
+                            </path>
+                            <path stroke-dasharray="8" stroke-dashoffset="8"
+                                d="M12 12l4 4M12 12l-4 -4M12 12l-4 4M12 12l4 -4">
+                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s"
+                                    to="0" />
+                            </path>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" *ngIf="selectedEmployee">
+                <div class="employee-info">
+                    <div class="avatar-large">{{ selectedEmployee.emp_first_name.charAt(0) }}{{
+                        selectedEmployee.emp_last_name.charAt(0) }}</div>
+                    <div class="info-text">
+                        <strong>{{ selectedEmployee.emp_first_name }} {{ selectedEmployee.emp_last_name }}</strong>
+                        <span>{{ selectedEmployee.emp_profile_id }}</span>
+                    </div>
+                </div>
+
+                <form class="modal-form" (ngSubmit)="submitAction()">
+                    <div class="form-group">
+                        <label>Select Date</label>
+                        <input type="date" [(ngModel)]="formData.date" name="date" required>
+                    </div>
+
+                    @if (modalType === 'login' || modalType === 'logoff') {
+                    <div class="form-group">
+                        <label>{{ modalType === 'login' ? 'Login' : 'Logoff' }} Time (HH:MM)</label>
+                        <input type="time" [(ngModel)]="formData.time" name="time" required>
+                    </div>
+                    } @else if (modalType !== 'absent') {
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Start Time</label>
+                            <input type="time" [(ngModel)]="formData.startTime" name="startTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label>End Time</label>
+                            <input type="time" [(ngModel)]="formData.endTime" name="endTime" required>
+                        </div>
+                    </div>
+                    }
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            {{ modalType === 'absent' ? 'Mark as Absent' : 'Submit Record' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Success/Error Toast -->
+    @if (toast.show) {
+    <div class="toast-container" [class.error]="toast.type === 'error'">
+        <div class="toast-content">
+            <span class="toast-icon">{{ toast.type === 'success' ? '✅' : '❌' }}</span>
+            <span class="toast-message">{{ toast.message }}</span>
+        </div>
+    </div>
+    }
+</div>

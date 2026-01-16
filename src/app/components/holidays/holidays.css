@@ -1,0 +1,306 @@
+@import '../tdl-dashboard/tdl-dashboard.css';
+
+.header-left .subtitle {
+    color: #64748b;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.add-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px !important;
+}
+
+/* Filters Bar */
+.filters-bar {
+    margin-top: 32px;
+    padding: 20px 24px !important;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    background: white;
+    border: 1px solid #f1f5f9;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-group label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    outline: none;
+    color: #1e293b;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    background: #f8fafc;
+}
+
+.filter-select:focus {
+    border-color: #3b82f6;
+}
+
+.filter-info {
+    margin-left: auto;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.filter-info strong {
+    color: #3b82f6;
+}
+
+.holidays-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+    margin-top: 32px;
+}
+
+.holiday-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.holiday-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.holiday-date {
+    background: #eff6ff;
+    color: #3b82f6;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.holiday-date .day {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.holiday-date .month {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.holiday-info {
+    flex-grow: 1;
+}
+
+.holiday-info h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 4px 0;
+}
+
+.holiday-info .date-full {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.holiday-info .description {
+    font-size: 13px;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.holiday-actions {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.holiday-card:hover .holiday-actions {
+    opacity: 1;
+}
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-btn.edit {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.action-btn.edit:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.action-btn.delete {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+.action-btn.delete:hover {
+    background: #fee2e2;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px !important;
+    margin-top: 40px;
+}
+
+.empty-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+}
+
+/* Modal Styling */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 500px;
+    padding: 32px !important;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.modal-header h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #94a3b8;
+    cursor: pointer;
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    outline: none;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+    .modal-content {
+        max-width: 90%;
+        margin: 20px;
+    }
+}

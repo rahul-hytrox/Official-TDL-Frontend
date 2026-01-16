@@ -1,0 +1,158 @@
+<div class="dashboard-container">
+    <app-sidebar></app-sidebar>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="header-title">
+                <button class="btn-back" (click)="goBack()">← Back</button>
+                <h1>{{ isAdmin() ? 'Manage Leave Applications' : 'My Leave Applications' }}</h1>
+            </div>
+        </header>
+
+        <section class="list-section card">
+            @if (successMsg) {
+            <div class="alert alert-success">{{ successMsg }}</div>
+            }
+            @if (error) {
+            <div class="alert alert-danger">{{ error }}</div>
+            }
+
+            @if (isLoading) {
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Syncing data...</p>
+            </div>
+            } @else if (leaves.length === 0) {
+            <div class="empty-state">
+                <span class="icon">📝</span>
+                <p>No leave applications found.</p>
+                @if (!isAdmin()) {
+                <button class="btn btn-primary mt-16" routerLink="/leave-app-form">Apply for Leave</button>
+                }
+            </div>
+            } @else {
+            <div class="table-wrapper">
+                <table class="leave-table">
+                    <thead>
+                        <tr>
+                            @if (isAdmin()) {
+                            <th>Employee</th>
+                            }
+                            <th>Leave Type</th>
+                            <th>Date Range</th>
+                            <th>Duration</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (leave of leaves; track leave.id) {
+                        <tr>
+                            @if (isAdmin()) {
+                            <td>
+                                <div class="emp-info">
+                                    <span class="emp-name">{{ leave.emp_first_name }} {{ leave.emp_last_name }}</span>
+                                    <span class="emp-id">{{ leave.emp_profile_id }}</span>
+                                </div>
+                            </td>
+                            }
+                            <td>
+                                <span class="type-tag" [attr.data-type]="leave.leave_type">{{ leave.leave_type }}</span>
+                            </td>
+                            <td>{{ formatDateRange(leave.start_date, leave.end_date) }}</td>
+                            <td><span class="duration-badge">{{ leave.leave_duration }}</span></td>
+                            <td>
+                                <span [class]="'status-badge ' + getStatusClass(leave.status)">
+                                    {{ leave.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn-view" (click)="openDetails(leave)">View Details</button>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            }
+        </section>
+    </main>
+
+    <!-- Details/Edit Modal -->
+    @if (showModal && selectedLeave) {
+    <div class="modal-overlay" (click)="closeModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Leave Application Details</h3>
+                <button class="close-icon" (click)="closeModal()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <label>Employee Name</label>
+                        <p>{{ selectedLeave.emp_first_name }} {{ selectedLeave.emp_last_name }}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Employee ID</label>
+                        <p>{{ selectedLeave.emp_profile_id }}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Date Range</label>
+                        <p>{{ formatDateRange(selectedLeave.start_date, selectedLeave.end_date) }}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Duration</label>
+                        <p>{{ selectedLeave.leave_duration }}</p>
+                    </div>
+                </div>
+
+                <div class="reason-box">
+                    <label>Reason for Leave</label>
+                    <div class="reason-text">{{ selectedLeave.reason }}</div>
+                </div>
+
+                <div class="meta-info">
+                    <p><strong>Reporting Manager:</strong> {{ selectedLeave.reporting_manager }}</p>
+                    <p><strong>Applied On:</strong> {{ selectedLeave.created_at | date:'dd MMM yyyy, hh:mm a' }}</p>
+                </div>
+
+                @if (isAdmin()) {
+                <hr class="divider">
+                <div class="admin-actions">
+                    <h4>Admin Actions</h4>
+                    <div class="edit-fields">
+                        <div class="form-group">
+                            <label>Modify Leave Type</label>
+                            <select [(ngModel)]="editType" class="form-control">
+                                @for (type of leaveTypes; track type) {
+                                <option [value]="type">{{ type }}</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Update Status</label>
+                            <select [(ngModel)]="editStatus" class="form-control">
+                                <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+                        <button class="btn btn-primary" (click)="updateLeave()" [disabled]="isUpdating">
+                            {{ isUpdating ? 'Updating...' : 'Save Changes' }}
+                        </button>
+                    </div>
+                </div>
+                } @else {
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" (click)="closeModal()">Close</button>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+    }
+</div>

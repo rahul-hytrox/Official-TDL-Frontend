@@ -1,0 +1,123 @@
+<app-sidebar></app-sidebar>
+
+<main class="main-content">
+    <div class="page-header">
+        <div class="header-content">
+            <h1 class="page-title">📊 Employee Reports</h1>
+            <p class="page-subtitle">Monthly attendance reports with working days calculation</p>
+        </div>
+    </div>
+
+    <!-- Month Selection Card -->
+    <div class="filter-card">
+        <div class="filter-header">
+            <h2>📅 Select Month</h2>
+        </div>
+        <div class="filter-content">
+            <div class="filter-row">
+                <div class="form-group">
+                    <label for="month-select">Month</label>
+                    <select id="month-select" [(ngModel)]="selectedMonth" (change)="onMonthChange()"
+                        class="form-select">
+                        @for (month of months; track month.value) {
+                        <option [value]="month.value">{{ month.label }}</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="year-select">Year</label>
+                    <select id="year-select" [(ngModel)]="selectedYear" (change)="onMonthChange()" class="form-select">
+                        @for (year of years; track year) {
+                        <option [value]="year">{{ year }}</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button class="btn-submit" (click)="onSubmit()" [disabled]="isLoading">
+                        🔍 Submit
+                    </button>
+                </div>
+                <div class="form-group export-group">
+                    <button class="btn-export" (click)="exportToPDF()" [disabled]="reports.length === 0 || isLoading">
+                        📄 Export to PDF
+                    </button>
+                    <button class="btn-download" (click)="exportToPDF()" [disabled]="reports.length === 0 || isLoading">
+                        📥 Download PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reports Table -->
+    <div class="reports-card">
+        <div class="card-header">
+            <h2>📋 Monthly Report - {{ getSelectedMonthName() }} {{ selectedYear }}</h2>
+        </div>
+        <div class="card-content">
+            @if (isLoading) {
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading reports...</p>
+            </div>
+            } @else if (noRecordsFound) {
+            <div class="empty-state error-state">
+                <div class="empty-icon">⚠️</div>
+                <h3>Soory! this month record not found</h3>
+                <p>We couldn't find any attendance logs for the selected period.</p>
+            </div>
+            } @else if (!hasSubmitted) {
+            <div class="empty-state">
+                <div class="empty-icon">📅</div>
+                <h3>Select Month and Year</h3>
+                <p>Please select a month and year from the dropdowns above and click <b>Submit</b> to view the report.
+                </p>
+            </div>
+            } @else {
+            <div class="table-wrapper">
+                <table class="reports-table">
+                    <thead>
+                        <tr>
+                            <th>Sr. No</th>
+                            <th>Emp ID</th>
+                            <th>Employee Name</th>
+                            <th>Total Days</th>
+                            <th>Present</th>
+                            <th>PL</th>
+                            <th>SL</th>
+                            <th>LOP</th>
+                            <th>Paid Days</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (report of reports; track report.emp_profile_id) {
+                        <tr>
+                            <td>{{ report.sr_no }}</td>
+                            <td>{{ report.emp_profile_id }}</td>
+                            <td>{{ report.emp_name }}</td>
+                            <td>{{ report.total_days }}</td>
+                            <td class="text-center">
+                                <span class="badge badge-present">{{ report.present }}</span>
+                            </td>
+                            <td class="text-center">{{ report.pl }}</td>
+                            <td class="text-center">{{ report.sl }}</td>
+                            <td class="text-center">{{ report.lop }}</td>
+                            <td class="text-center">
+                                <span class="badge badge-paid">{{ report.paid_days }}</span>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            }
+        </div>
+    </div>
+</main>
+
+<!-- Toast Notification -->
+@if (toast.show) {
+<div class="toast" [class.success]="toast.type === 'success'" [class.error]="toast.type === 'error'">
+    {{ toast.message }}
+</div>
+}

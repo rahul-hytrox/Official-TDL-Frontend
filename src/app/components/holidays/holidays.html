@@ -1,0 +1,116 @@
+<div class="dashboard-container">
+    <app-sidebar></app-sidebar>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="header-left">
+                <h1>Company Holidays</h1>
+                <p class="subtitle">Official list of upcoming holidays and office closures</p>
+            </div>
+            <div class="header-right">
+                @if (isAdmin) {
+                <button class="btn btn-primary add-btn" (click)='openAddModal()'>
+                    <span class="icon">➕</span> Add Holiday
+                </button>
+                }
+            </div>
+        </header>
+
+        <!-- Filters Section -->
+        <div class="filters-bar card">
+            <div class="filter-group">
+                <label>Select Year</label>
+                <select [(ngModel)]="selectedYear" (change)="onFilterChange()" class="filter-select">
+                    @for (year of years; track year) {
+                    <option [value]="year">{{ year }}</option>
+                    }
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Select Month</label>
+                <select [(ngModel)]="selectedMonth" (change)="onFilterChange()" class="filter-select">
+                    <option value="all">Full Year</option>
+                    @for (month of months; track month.value) {
+                    <option [value]="month.value">{{ month.name }}</option>
+                    }
+                </select>
+            </div>
+            <div class="filter-info">
+                <span>Showing results for: <strong>{{ selectedMonth === 'all' ? 'Entire Year' : months[+selectedMonth -
+                        1].name }} {{ selectedYear }}</strong></span>
+            </div>
+        </div>
+
+        @if (isLoading) {
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Syncing holiday calendar...</p>
+        </div>
+        } @else {
+        @if (holidays.length > 0) {
+        <div class="holidays-grid">
+            @for (holiday of holidays; track $index) {
+            <div class="holiday-card card">
+                <div class="holiday-date">
+                    <span class="day">{{ holiday.holiday_date | date:'dd' }}</span>
+                    <span class="month">{{ holiday.holiday_date | date:'MMM' }}</span>
+                </div>
+                <div class="holiday-info">
+                    <h3>{{ holiday.holiday_name }}</h3>
+                    <p class="date-full">{{ holiday.holiday_date | date:'fullDate' }}</p>
+                    @if (holiday.holiday_description) {
+                    <p class="description">{{ holiday.holiday_description }}</p>
+                    }
+                </div>
+                @if (isAdmin) {
+                <div class="holiday-actions">
+                    <button class="action-btn edit" (click)="openEditModal(holiday)" title="Edit">✏️</button>
+                    <button class="action-btn delete" (click)="deleteHoliday(holiday.id!)" title="Delete">🗑️</button>
+                </div>
+                }
+            </div>
+            }
+        </div>
+        } @else {
+        <div class="empty-state card">
+            <div class="empty-icon">🏖️</div>
+            <h3>No Holidays Found</h3>
+            <p>The holiday list is currently empty for the selected filters.</p>
+        </div>
+        }
+        }
+
+        <!-- Modal for Add/Edit -->
+        @if (isModalOpen) {
+        <div class="modal-overlay" (click)="closeModal()">
+            <div class="modal-content card" (click)="$event.stopPropagation()">
+                <div class="modal-header">
+                    <h2>{{ isEditMode ? 'Update Holiday' : 'Add New Holiday' }}</h2>
+                    <button class="close-btn" (click)="closeModal()">✕</button>
+                </div>
+                <form (ngSubmit)="onSubmit()" class="modal-form">
+                    <div class="form-group">
+                        <label for="name">Holiday Name</label>
+                        <input type="text" id="name" name="name" [(ngModel)]="currentHoliday.holiday_name"
+                            placeholder="e.g. New Year's Day" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Holiday Date</label>
+                        <input type="date" id="date" name="date" [(ngModel)]="currentHoliday.holiday_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description (Optional)</label>
+                        <textarea id="description" name="description" [(ngModel)]="currentHoliday.holiday_description"
+                            placeholder="Short description about the holiday..." rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Save Changes' : 'Create Holiday'
+                            }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        }
+    </main>
+</div>

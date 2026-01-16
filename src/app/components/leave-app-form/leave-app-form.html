@@ -1,0 +1,116 @@
+<div class="dashboard-container">
+    <app-sidebar></app-sidebar>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="header-title">
+                <button class="btn-back" (click)="goBack()">← Back</button>
+                <h1>Request Leave</h1>
+            </div>
+        </header>
+
+        <section class="form-section card">
+            @if (submitSuccess) {
+            <div class="success-message">
+                <div class="success-icon">✅</div>
+                <h2>Mail Sent & Application Saved!</h2>
+                <p>Your leave request has been sent to HR and saved in our records.</p>
+                <p>Redirecting to dashboard...</p>
+            </div>
+            } @else {
+            <form [formGroup]="leaveForm" (ngSubmit)="onSubmit()" class="leave-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" formControlName="fullName" class="form-control" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="emailId">Email ID</label>
+                        <input type="email" id="emailId" formControlName="emailId" class="form-control" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="employeeId">Employee ID</label>
+                        <input type="text" id="employeeId" formControlName="employeeId" class="form-control" readonly>
+                        @if (leaveForm.get('employeeId')?.touched && leaveForm.get('employeeId')?.invalid) {
+                        <span class="error">Employee ID is required</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="department">Department / Team</label>
+                        <input type="text" id="department" formControlName="department" class="form-control" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" id="startDate" formControlName="startDate" class="form-control">
+                        @if (leaveForm.get('startDate')?.touched && leaveForm.get('startDate')?.invalid) {
+                        <span class="error">Start date is required</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endDate">End Date</label>
+                        <input type="date" id="endDate" formControlName="endDate" class="form-control">
+                        @if (leaveForm.get('endDate')?.touched && leaveForm.get('endDate')?.invalid) {
+                        <span class="error">End date is required</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="leaveType">Leave Type</label>
+                        <select id="leaveType" formControlName="leaveType" class="form-control">
+                            <option value="">Select Leave Type</option>
+                            @for (type of leaveTypes; track type) {
+                            <option [value]="type">{{ type }}</option>
+                            }
+                        </select>
+                        @if (leaveForm.get('leaveType')?.touched && leaveForm.get('leaveType')?.invalid) {
+                        <span class="error">Please select a leave type</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label>Leave Duration</label>
+                        <div class="radio-group">
+                            @for (dur of durations; track dur) {
+                            <label class="radio-label">
+                                <input type="radio" formControlName="leaveDuration" [value]="dur">
+                                <span>{{ dur }}</span>
+                            </label>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reportingManager">Reporting Manager</label>
+                        <input type="text" id="reportingManager" formControlName="reportingManager" class="form-control"
+                            placeholder="Manager Name">
+                        @if (leaveForm.get('reportingManager')?.touched && leaveForm.get('reportingManager')?.invalid) {
+                        <span class="error">Reporting manager is required</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group mt-20">
+                    <label for="reason">Reason for Leave</label>
+                    <textarea id="reason" formControlName="reason" class="form-control" rows="4"
+                        placeholder="Please explain the reason for your leave..."></textarea>
+                    @if (leaveForm.get('reason')?.touched && leaveForm.get('reason')?.invalid) {
+                    <span class="error">Reason must be at least 10 characters</span>
+                    }
+                </div>
+
+                <div class="form-actions mt-32">
+                    <button type="button" class="btn btn-secondary" (click)="goBack()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+                        {{ isSubmitting ? 'Submitting...' : 'Submit Leave Request' }}
+                    </button>
+                </div>
+            </form>
+            }
+        </section>
+    </main>
+</div>

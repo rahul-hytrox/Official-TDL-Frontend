@@ -1,0 +1,136 @@
+<div class="dashboard-container">
+    <app-sidebar></app-sidebar>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <h1>Welcome back, {{ firstName }}!</h1>
+            <div class="header-clock">
+                <div class="clock-date">{{ currentDate }}</div>
+                <div class="clock-time">{{ currentTime }}</div>
+            </div>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon attendance">📅</div>
+                <div class="stat-details">
+                    <h3>Present Days</h3>
+                    <p class="count">{{ monthlyStats.present }}/{{ monthlyStats.workingDays }}</p>
+                    <span class="trend positive">This Month</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon breaks">☕</div>
+                <div class="stat-details">
+                    <h3>Total Breaks</h3>
+                    <p class="count">{{ dailyActivity?.summary?.total_break_hrs || '0.00' }}h</p>
+                    <span class="trend">{{ dailyActivity?.summary?.total_break_mins || 0 }} minutes today</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon hours">⏱️</div>
+                <div class="stat-details">
+                    <h3>Login Status</h3>
+                    <p class="count">{{ dailyActivity?.attendance?.status || 'Not Logged In' }}</p>
+                    <span class="trend">Live Status</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-sections">
+            <div class="recent-activity card">
+                <div class="section-header-flex">
+                    <h3>Recent Activity</h3>
+                </div>
+
+                @if (isLoadingActivity) {
+                <div class="loading-mini">
+                    <div class="spinner-small"></div>
+                    <p>Syncing activity...</p>
+                </div>
+                } @else if (activities.length > 0) {
+                <div class="activity-list">
+                    @for (act of activities; track $index) {
+                    <div class="activity-item" [class.latest]="$index === 0">
+                        <div class="activity-time-col">
+                            <span class="time">{{ act.time }}</span>
+                        </div>
+                        <div class="activity-content-col">
+                            <div class="activity-main">
+                                <span class="icon">{{ act.icon }}</span>
+                                <p class="title">{{ act.title }}</p>
+                            </div>
+                            @if (act.duration) {
+                            <span class="duration-tag">{{ act.duration }}</span>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+                } @else {
+                <div class="activity-empty">
+                    <span class="icon">📝</span>
+                    <p>No activity recorded for today yet.</p>
+                </div>
+                }
+            </div>
+
+            <div class="quick-actions card">
+                <h3>Quick Actions</h3>
+                <div class="action-buttons">
+                    <!-- <button class="btn btn-primary">Mark Attendance</button> -->
+                    <button class="btn btn-secondary" routerLink="/leave-app-form">Request Leave</button>
+                    <button class="btn btn-outline" (click)="toggleReport()">
+                        {{ showReport ? 'Hide Reports' : 'View Reports' }}
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        @if (showReport) {
+        <section class="analytics-report mt-32">
+            <div class="report-header card">
+                <div class="header-content">
+                    <h3>Employee Analytics Report</h3>
+                    <p class="subtitle">Monthly data and performance tracking</p>
+                </div>
+
+                <div class="report-filters">
+                    <div class="filter-group">
+                        <select class="filter-select" [(ngModel)]="selectedMonth" (change)="onFilterChange()">
+                            @for (m of months; track m.value) {
+                            <option [value]="m.value">{{ m.label }}</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <select class="filter-select" [(ngModel)]="selectedYear" (change)="onFilterChange()">
+                            @for (y of years; track y) {
+                            <option [value]="y">{{ y }}</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn-close" (click)="toggleReport()">✕</button>
+            </div>
+
+            <div class="charts-container mt-24">
+                <div class="chart-box card pie-box">
+                    <h4>Monthly Attendance</h4>
+                    <div class="chart-wrapper">
+                        <div echarts [options]="pieOptions" class="demo-chart"></div>
+                    </div>
+                </div>
+
+                <div class="chart-box card line-box">
+                    <h4>Working & Break Hours Trend</h4>
+                    <div class="chart-wrapper">
+                        <div echarts [options]="lineOptions" class="demo-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        }
+    </main>
+</div>
