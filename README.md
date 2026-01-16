@@ -1,4 +1,4 @@
-# ILEM TDL-Portal Dashboard (Frontend) 💻
+# TDL-Portal Dashboard (Frontend) 💻
 
 A high-performance, premium administrative and employee dashboard built with **Angular 19**. This portal provides real-time visualization of attendance, break patterns, and payroll metrics.
 
@@ -69,7 +69,7 @@ The output will be in the `dist/tdl-portal` folder.
 ---
 
 ## 🤝 Community & Collaboration
-This frontend is part of the ILEM Open Source initiative. We follow and collaborate with developers globally.
+This frontend is part of the Open Source initiative. We follow and collaborate with developers globally.
 
 **Maintainer:** [rahul-hytrox](https://github.com/rahul-hytrox)
 
@@ -78,4 +78,4 @@ This frontend is part of the ILEM Open Source initiative. We follow and collabor
 2. Ensure UI responsiveness before PR submission.
 3. Don't touch the core `styles.css` without discussion.
 
-Built with ❤️ by the ILEM Attendance Project Batch.
+Built with ❤️ by the Attendance Project Batch.
